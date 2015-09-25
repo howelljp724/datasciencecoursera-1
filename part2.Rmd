@@ -1,0 +1,71 @@
+---
+title: "Tooth growth"
+
+---
+
+
+###In the second part,the task is to analyze the ToothGrowth data in the R datasets package.
+
+1.Load the ToothGrowth data and perform some basic exploratory data analyses
+2.Provide a basic summary of the data.
+3.Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there’s other approaches worth considering)
+4.State your conclusions and the assumptions needed for your conclusions.
+
+###Data Description
+
+Tooth growth data consist of length of odontoblasts (teeth) growth in 60 guinea pigs. 6 groups consisting of 10 guinea pigs were subject to three different doses of Vitamin C (0.5, 1 and 2 mg) using two different delivery methods (OJ: orange juice and VC: ascorbic acid)
+```{r eval=TRUE}
+library(datasets)
+data(ToothGrowth)
+head(ToothGrowth)
+```
+Summary of the dataset
+```{r eval=TRUE}
+summary(ToothGrowth)
+```
+
+Plot for the tooth growth data against two crossed factors
+       
+```{r eval=TRUE} 
+boxplot(len~supp*dose, data = ToothGrowth, col = c("lightgreen", "orange"), main = "Tooth Growth", xlab ="Suppliment and dose", ylab = "length in mm")
+```
+
+###Conclusion
+
+From the box plot it is clear that with increase in dose level (0.5 mg to 2 mg) the  tooth growth increased. For low dose levels (0.5 mg and 1 mg) orange juice shows to have larger effect on tooth growth than ascorbic acid but a proper statistical analysis is needed before any final conclusion.
+
+###Statistical Analysis of data
+
+**Combined effect of two different supplements**
+```{r eval=TRUE}
+toothLen.doseOJ = subset(ToothGrowth, supp == "OJ")
+toothLen.doseVC = subset(ToothGrowth, supp == "VC")
+doseEffect  <- t.test(toothLen.doseOJ$len, toothLen.doseVC$len)
+doseEffect
+```
+
+
+###Conclusion
+For 95% confidence interval we obtained a p value of 0.0606 which is greater than 0.05. At this confidence interval we cannot reject the null hypothesis and thus it is safe to conclude that we donot observe any significant difference in tooth length growth for the combined dosses of orange juice and ascorbic acid. Confidence interval lies between [-0.171, 7.571] and it also includes 0, that also supports my conclusion (no differnece in supplement effects)
+
+**Effect of the largest dose (2mg) for different supplements
+Null- hypothesis: effect of 2mg dose of OJ = effect of 2mg dose of VC**
+
+```{r eval=TRUE}
+largedoseEffect  <- t.test(subset(toothLen.doseOJ, dose == 2.0)$len, subset(toothLen.doseVC, dose == 2.0)$len)
+largedoseEffect
+```
+###Conclusion
+As stated earlier, for the larger dose of 2mg we donot see any significant difference in tooth growth for different supplements. The p- values stands at 0.9639 which is greater than 0.05 and thus we fail to reject null hypothesis.Confidence interval lies between [-3.7981, 3.6381] and it includes 0, that also supports the conclusion.
+
+**Effect of the smaller dose (<2mg) for different supplements
+Null- hypothesis: effect of dose < 2mg of OJ = effect of dose <2mg of VC**
+```{r eval=TRUE}
+smalldoseEffect  <- t.test(subset(toothLen.doseOJ, dose < 2.0)$len, subset(toothLen.doseVC, dose < 2.0)$len)
+smalldoseEffect
+```
+###Conclusion
+A p-value of 0.0042 is lower than 0.05 for a 95% confidence interval and we can reject the null hypothesis in the favor of altenative hypothesis, that is, orange juice results in larger tooth growth when compared with ascorbic acid for doses of 0.5 mg and 1 mg. Confidence interval lies between [1.8752, 9.3048] and it does not includes 0, that also supports my conclusion (significant difference for small doses of two different supplement)
+
+###Final Conclusion
+It appears that ascorbic acid and orange juice both results in tooth growth however at lower doses (0.5mg and 1 mg) orange juice produces better results. Further increase in dose, doesnot result in any significant differences and both the supplements results in similar tooth growth.
