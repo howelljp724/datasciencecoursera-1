@@ -1,0 +1,27 @@
+---
+title: "Interactive Data Mapping"
+author: "Mrinalini Prakhya"
+date: "February 18, 2017"
+output: html_document
+---
+## Instructions
+
+1.Create a web page using R Markdown that features a map created with Leaflet.
+
+2.Host your webpage on either GitHub Pages, RPubs, or NeoCities.
+
+3.Your webpage must contain the date that you created the document, and it must contain a map created with Leaflet. We would love to see you show off your creativity!
+
+### Most populated cities in Bay area
+```{r, eval=TRUE}
+library(leaflet)
+BA_cities <- data.frame(name = c("SanFrancisco", "SanJose", "Fremont", "Oakland", "Hayward", "SantaRosa", "Sunnyvale", "Concord", "Berkely", "Cupertino"),
+pop = c(805235, 945942, 214089, 390724, 144186, 167815, 140081, 122067, 112580, 58302),
+lat = c(37.774929, 37.363947, 37.548270, 37.804364, 37.668821, 38.440429, 37.368830, 37.977978, 37.871593, 37.322998),
+lng = c(-122.4194630, -121.928938, -121.988572, -122.271114, -122.080796, -122.714055, -122.036350, -122.031073, -122.272747, -122.032182))
+BA_cities %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircles(weight = 0.05, radius = sqrt(BA_cities$pop) * 15)
+  
+```
