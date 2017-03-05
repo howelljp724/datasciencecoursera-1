@@ -1,0 +1,76 @@
+---
+title: "BMIcalculator"
+author: "Mrinalini Prakhya"
+date: "March 4, 2017"
+output: ioslides_presentation
+---
+
+
+
+## What is BMI? 
+The body mass index, or BMI, is a calculation used to determine your level of body fat. It can help a doctor determine your overall fitness and your risk of developing chronic diseases.  Calculate BMI using Shiny ui.R
+```{r,eval=FALSE}
+library(shiny) 
+shinyUI(
+  pageWithSidebar(
+    # Application title
+    headerPanel("Body Mass Index (BMI) Calculator"),
+        sidebarPanel(
+      numericInput('weight', 'Enter your weight in pounds', 100) ,
+      numericInput('height', 'Enter your height in inches', 60, min = 50, max = 100, step = 10),
+      submitButton('Calculate BMI')
+    ), 
+    mainPanel(
+      p('The Body mass index (BMI) is a measure of body fat based on height and weight that applies to both men and women between the ages of 18 and 65 years.'),
+      p('BMI can be used to indicate if you are overweight, obese, underweight or normal. A healthy BMI score is between 20 and 25.'),
+      p('The World Health Organization (WHO) proposed the following classification for BMI Measure:'),
+      tags$div(
+        tags$ul(
+          tags$li('BMI <18.5       : Underweight'),
+          tags$li('BMI [18.5-24.9] : Normal weight'),
+          tags$li('BMI [25-29.9]   : Overweight'),
+          tags$li('BMI >=30        : Obesity')
+        )
+      ),
+            h4('Calculating BMI based on values entered:'), 
+      p('weight in pounds:'), verbatimTextOutput("inputweightvalue"),
+      p('height in inches:'), verbatimTextOutput("inputheightvalue"),
+      h4('Your BMI is:'),
+      verbatimTextOutput("estimation"),
+      p('It means that you are:'),strong(verbatimTextOutput("diagnostic"))
+          )
+    )   
+)
+```
+## server.R
+```{r,eval=FALSE}
+library(shiny) 
+
+BMI<-function(weight,height) {(weight*0.45)/((height*0.025)^2)}
+
+diagnostic_f<-function(weight,height){
+  BMI_value<-(weight*0.45)/((height*0.025)^2)
+  ifelse(BMI_value<18.5,"underweight",ifelse(BMI_value<25,"normal weight",ifelse(BMI_value<30,"overweight","obesity")))
+}
+
+shinyServer(
+  function(input, output) {
+    
+    output$inputweightvalue <- renderPrint({input$weight})
+    output$inputheightvalue <- renderPrint({input$height})
+    output$estimation <- renderPrint({BMI(input$weight,input$height)})
+    output$diagnostic <- renderPrint({diagnostic_f(input$weight,input$height)})
+  } 
+)
+```
+## Why is the number important?
+
+A body mass index in the low range signals that you could be malnourished. Maybe your body isn't properly absorbing nutrients or maybe you're just not getting enough calories to support your activity level. Conversely, having a BMI on the higher end alerts your physician that your risks of heart disease, diabetes and certain cancers are higher than someone with a normal BMI. Your doctor might set you up with a registered dietitian, who can help you get your weight back on track and reduce your risk of developing health problems.
+
+**What the results mean?**
+
+Generally, if you're at a healthy weight, your body mass index should fall between 18.5 and 24.9, notes the National Heart, Lung and Blood Institute. If your BMI is below 18.5, you could be underweight. On the other hand, a BMI greater than 25.0 is categorized as overweight, while a score above 30 is considered obese.
+
+## Problems
+
+While BMI is a starting point to evaluate your health, it isn't flawless. For example, it doesn't account for gender, and women tend to have more body fat than men. So as a woman, even if your body mass index is in the normal range, you could still have a high percentage of body fat. The calculation also doesn't account for muscle mass. Muscle weighs more than fat, so if you lift weights and have toned muscles, your BMI could be high even if you're not overweight. Because of these flaws, your doctor also might run lab tests to evaluate your blood cholesterol levels. In addition, he might measure your waist. A wider than average waist is another indicator for obesity and the risk of related diseases.
